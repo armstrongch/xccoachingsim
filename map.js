@@ -22,6 +22,10 @@ var map =
 		[520, 630],
 		[400, 320]
 	],
+	course_segment_lengths: [],
+	pixels_per_meter: -1,
+	kilometer_markers: [],
+	mile_markers: [],
 	
 	draw: function()
 	{
@@ -37,20 +41,122 @@ var map =
 		ctx.beginPath();
 		ctx.moveTo(this.course_points[0][0], this.course_points[0][1]);
 		
-		for (let p = 1; p < this.course_points.length; p += 1);
+		for (let p = 1; p < this.course_points.length; p += 1)
 		{
-			console.log("p: " + p); //why doesn't this work?
 			ctx.lineTo(
 				this.course_points[p][0],
 				this.course_points[p][1]);
 		}
 		ctx.stroke();
+		
+		//draw the kilometer markers
+		for (let i = 0; i < this.kilometer_markers.length; i += 1)
+		{
+			ctx.beginPath();
+			ctx.arc(this.kilometer_markers[i].x, this.kilometer_markers[i].y, 15, 0, Math.PI*2);
+			ctx.stroke();
+		}
+		
+		//draw the mile markers
+		for (let i = 0; i < this.mile_markers.length; i += 1)
+		{
+			ctx.beginPath();
+			ctx.arc(this.mile_markers[i].x, this.mile_markers[i].y, 15, 0, Math.PI*2);
+			ctx.stroke();
+		}
 	},
 	
 	setup: function()
 	{
 		this.canvas = $("#gameCanvas")[0];
 		this.ctx = this.canvas.getContext('2d');
+		
+		this.pixels_per_meter = 0;
+		for (let i = 1; i < this.course_points.length; i += 1)
+		{
+			var segment_distance = Math.sqrt(
+				Math.pow(this.course_points[i-1][0] - this.course_points[i][0], 2)
+				+ Math.pow(this.course_points[i-1][1] - this.course_points[i][1], 2));
+			this.course_segment_lengths.push(segment_distance);
+			this.pixels_per_meter += segment_distance;
+		}
+		this.pixels_per_meter = this.pixels_per_meter/8000;
+		
+		//kilometer markers
+		this.kilometer_markers.push(
+			{ segment_index: 0, pixels_along_segment: 0, x: this.course_points[0][0], y: this.course_points[0][1] }
+		);
+		
+		for (let i = 0; i < 7; i += 1)
+		{
+			var distance_to_cover = 1000*this.pixels_per_meter;
+			var previous_marker = this.kilometer_markers[i];
+			var current_segment_index = previous_marker.segment_index;
+			var segment_distance = this.course_segment_lengths[current_segment_index] - previous_marker.pixels_along_segment;
+			while (distance_to_cover > segment_distance)
+			{
+				distance_to_cover -= segment_distance;
+				current_segment_index += 1;
+				segment_distance = this.course_segment_lengths[current_segment_index];
+			}
+			var new_marker = { segment_index: current_segment_index };
+			if (current_segment_index == previous_marker.segment_index)
+			{
+				new_marker.pixels_along_segment = previous_marker.pixels_along_segment + distance_to_cover;
+				//this is the case where 2 distance markers are on the same segment. make sure to test this, because it will rarely ever happen
+			}
+			else
+			{
+				new_marker.pixels_along_segment = distance_to_cover;
+			}
+			
+			var segment_dir_radians = -1*Math.atan2(
+				this.course_points[current_segment_index+1][1] - this.course_points[current_segment_index][1],
+				this.course_points[current_segment_index+1][0] - this.course_points[current_segment_index][0]); //(y2-y1, x2-x1)
+				
+			new_marker.x = this.course_points[current_segment_index][0] + Math.cos(segment_dir_radians)*new_marker.pixels_along_segment;
+			new_marker.y = this.course_points[current_segment_index][1] - Math.sin(segment_dir_radians)*new_marker.pixels_along_segment;
+			
+			this.kilometer_markers.push(new_marker);
+		}
+		
+		//mile markers
+		this.mile_markers.push(
+			{ segment_index: 0, pixels_along_segment: 0, x: this.course_points[0][0], y: this.course_points[0][1] }
+		);
+		
+		for (let i = 0; i < 4; i += 1)
+		{
+			var distance_to_cover = 1608*this.pixels_per_meter;
+			var previous_marker = this.mile_markers[i];
+			var current_segment_index = previous_marker.segment_index;
+			var segment_distance = this.course_segment_lengths[current_segment_index] - previous_marker.pixels_along_segment;
+			while (distance_to_cover > segment_distance)
+			{
+				distance_to_cover -= segment_distance;
+				current_segment_index += 1;
+				segment_distance = this.course_segment_lengths[current_segment_index];
+			}
+			var new_marker = { segment_index: current_segment_index };
+			if (current_segment_index == previous_marker.segment_index)
+			{
+				new_marker.pixels_along_segment = previous_marker.pixels_along_segment + distance_to_cover;
+				//this is the case where 2 distance markers are on the same segment. make sure to test this, because it will rarely ever happen
+			}
+			else
+			{
+				new_marker.pixels_along_segment = distance_to_cover;
+			}
+			
+			var segment_dir_radians = -1*Math.atan2(
+				this.course_points[current_segment_index+1][1] - this.course_points[current_segment_index][1],
+				this.course_points[current_segment_index+1][0] - this.course_points[current_segment_index][0]); //(y2-y1, x2-x1)
+				
+			new_marker.x = this.course_points[current_segment_index][0] + Math.cos(segment_dir_radians)*new_marker.pixels_along_segment;
+			new_marker.y = this.course_points[current_segment_index][1] - Math.sin(segment_dir_radians)*new_marker.pixels_along_segment;
+			
+			this.mile_markers.push(new_marker);
+		}
 		
 		//uphill and downhill each constitute 20% of the 8000m course: 1600m
 		//a single hill may constitute between 200 and 1000 meters
