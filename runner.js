@@ -36,6 +36,21 @@ function mutate_runner(index)
 	runners[index][mutations[negative_mutation_index]] -= mutation_value*mutation_max_values[negative_mutation_index];
 }
 
+function draw_dude(x, y, fillStyle, radius)
+{
+	var ctx = map.ctx;
+	ctx.fillStyle = fillStyle;
+	
+	ctx.beginPath();
+	ctx.arc(x, y-radius, radius, 0, Math.PI*2);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.moveTo(x, y);
+	ctx.lineTo(x-radius, y+radius*2);
+	ctx.lineTo(x+radius, y+radius*2);
+	ctx.fill();
+}
+
 /*
 race is 8000 meters
 the average runner should finish in 30 minutes
