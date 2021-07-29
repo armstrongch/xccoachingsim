@@ -21,7 +21,7 @@ function mutate_runner(index)
 {
 	
 	var mutations = ["base_speed", "base_energy", "accel_cost", "recovery_pace", "pack_bonus", "hill_reduction", "hill_bonus"];
-	var mutation_max_values = [0.3, 200, 0.1, 0.3, 0.1, 0.2, 0.2];
+	var mutation_max_values = [0.3, 200, -0.1, 0.3, 0.1, -0.2, 0.2];
 	
 	var positive_mutation_index = Math.floor(Math.random()*mutations.length);
 	var negative_mutation_index = positive_mutation_index + Math.ceil(Math.random()*(mutations.length-1));

@@ -4,10 +4,11 @@ var game =
 	{
 		race.setup();
 		map.setup();
+		this.draw();
 	},
 	draw: function()
 	{
-		
+		map.draw();
 	},
 	start: function()
 	{
