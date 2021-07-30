@@ -1,5 +1,6 @@
 var race = 
 {
+	elapsed_seconds: 0,
 	teams: ["red", "blue", "green", "yellow", "purple"],
 	
 	setup: function()

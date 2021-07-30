@@ -20,19 +20,22 @@ var game =
 	},
 	start: function()
 	{
-		this.loop_var = setInterval(function() {game.loop();}, 17);  //approx 60 fps
+		clearInterval(this.loop_var);
+		this.loop_var = setInterval(function() {game.loop();}, 1000/60);  //60 fps
 		this.game_state = "play";
 	},
 	loop: function()
 	{
 		if (this.game_state == "play")
 		{
+			race.elapsed_seconds += game.race_seconds_per_real_seconds/60;
 			switch(this.view)
 			{
 				case "map":
 					coach.move();
 					map.draw();
 					coach.draw();
+					ui.draw();
 					break;
 				default:
 					break;
@@ -65,5 +68,5 @@ var game =
 			default:
 				break;
 		}
-	}
+	},
 }

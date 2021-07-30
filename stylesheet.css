@@ -1,3 +1,7 @@
 #gameCanvas {
 	border-style: solid;
 }
+
+body {
+	font-size: large;
+}
