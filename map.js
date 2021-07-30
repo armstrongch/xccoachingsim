@@ -48,15 +48,7 @@ var map =
 		}
 		ctx.stroke();
 		
-		//draw the kilometer markers
-		for (let i = 0; i < this.distance_markers.length; i += 1)
-		{
-			ctx.beginPath();
-			ctx.arc(this.distance_markers[i].x, this.distance_markers[i].y, 15, 0, Math.PI*2);
-			ctx.stroke();
-		}
-		
-		//draw the mile markers
+		//draw the distance markers
 		for (let i = 0; i < this.distance_markers.length; i += 1)
 		{
 			ctx.beginPath();

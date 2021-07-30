@@ -1,6 +1,9 @@
 var game = 
 {
-	state: "setup",
+	game_state: "setup",
+	view: "map",
+	loop_var: null,
+	race_seconds_per_real_seconds: 15, //a 30-minute race takes 2 minutes of real time?
 	
 	setup: function()
 	{
@@ -8,7 +11,7 @@ var game =
 		map.setup();
 		coach.setup();
 		this.draw();
-		this.state = "paused";
+		this.game_state = "paused";
 	},
 	draw: function()
 	{
@@ -17,11 +20,28 @@ var game =
 	},
 	start: function()
 	{
-		setInterval(this.loop, 17);  //approx 60 fps
+		this.loop_var = setInterval(function() {game.loop();}, 17);  //approx 60 fps
+		this.game_state = "play";
 	},
 	loop: function()
 	{
-		
+		if (this.game_state == "play")
+		{
+			switch(this.view)
+			{
+				case "map":
+					coach.move();
+					map.draw();
+					coach.draw();
+					break;
+				default:
+					break;
+			}
+		}
+		else
+		{
+			clearInterval(this.loop_var);
+		}
 	},
 	click: function(event)
 	{
@@ -29,12 +49,17 @@ var game =
 		var mouse_y = event.offsetY;
 		console.log("x coords: " + mouse_x + ", y coords: " + mouse_y);
 		
-		switch(this.state)
+		switch(this.view)
 		{
-			case "paused":
+			case "map":
 				for (let i = 0; i < map.distance_markers.length; i += 1)
 				{
-					
+					if (point_distance(map.distance_markers[i].x, map.distance_markers[i].y, mouse_x, mouse_y) <= 15)
+					{
+						coach.target_marker = map.distance_markers[i];
+						i = map.distance_markers.length; //break out of the loop
+						this.start();
+					}
 				}
 				break;
 			default:
