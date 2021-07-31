@@ -40,15 +40,22 @@ function draw_dude(x, y, fillStyle, radius)
 {
 	var ctx = map.ctx;
 	ctx.fillStyle = fillStyle;
+	ctx.strokeStyle = map.colors.asphalt;
 	
 	ctx.beginPath();
 	ctx.arc(x, y-radius, radius, 0, Math.PI*2);
-	ctx.fill();
-	ctx.beginPath();
 	ctx.moveTo(x, y);
 	ctx.lineTo(x-radius, y+radius*2);
 	ctx.lineTo(x+radius, y+radius*2);
 	ctx.fill();
+	
+	ctx.beginPath();
+	ctx.arc(x, y-radius, radius, 0, Math.PI*2);
+	ctx.moveTo(x, y);
+	ctx.lineTo(x-radius, y+radius*2);
+	ctx.lineTo(x+radius, y+radius*2);
+	ctx.lineTo(x, y);
+	ctx.stroke();
 }
 
 /*

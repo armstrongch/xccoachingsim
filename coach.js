@@ -23,7 +23,7 @@ var coach =
 		}
 	},
 	draw: function() {
-		draw_dude(this.x, this.y, "black", 10);
+		draw_dude(this.x, this.y, map.colors.team_white, 10);
 	}
 };
 

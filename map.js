@@ -9,35 +9,70 @@ var map =
 	pixels_per_meter: -1,
 	distance_markers: [],
 	
+	colors: {
+		asphalt: "#0A0903",
+		sand: "#FFFD82",
+		tree: "#FF8200",
+		grass: "#698F3F",
+		tall_grass: "#386641",
+		team_blue: "#0D00A4",
+		team_red: "#BA1B1D",
+		team_purple: "#A846A0",
+		team_white: "#F6F8FF",
+		team_green: "#59C9A5",
+	},
+	
 	draw: function()
 	{
 		var ctx = this.ctx;
 		var canvas = this.canvas; //1024 x 768
 		
 		//draw the background
-		ctx.fillStyle = "white";
+		ctx.fillStyle = this.colors.sand;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 		
 		//draw the course
-		ctx.strokeStyle = "black";
+		ctx.fillStyle = this.colors.grass;
 		ctx.beginPath();
-		ctx.moveTo(this.course_points[0][0], this.course_points[0][1]);
-		
-		for (let p = 1; p < this.course_points.length; p += 1)
+		for (let p = 0; p < this.course_points.length - 1; p += 1)
 		{
+			ctx.arc(this.course_points[p][0], this.course_points[p][1],
+					20, 0, Math.PI*2);
+			
+			var dir = point_direction(
+				this.course_points[p][0], this.course_points[p][1],
+				this.course_points[p+1][0], this.course_points[p+1][1]);
+				
+			ctx.moveTo(
+				this.course_points[p][0] + Math.cos(dir+Math.PI/2)*20,
+				this.course_points[p][1] - Math.sin(dir+Math.PI/2)*20);
+			
 			ctx.lineTo(
-				this.course_points[p][0],
-				this.course_points[p][1]);
+				this.course_points[p+1][0] + Math.cos(dir+Math.PI/2)*20,
+				this.course_points[p+1][1] - Math.sin(dir+Math.PI/2)*20);
+				
+			ctx.lineTo(
+				this.course_points[p+1][0] + Math.cos(dir-Math.PI/2)*20,
+				this.course_points[p+1][1] - Math.sin(dir-Math.PI/2)*20);
+			
+			ctx.lineTo(
+				this.course_points[p][0] + Math.cos(dir-Math.PI/2)*20,
+				this.course_points[p][1] - Math.sin(dir-Math.PI/2)*20);
+			ctx.lineTo(
+				this.course_points[p][0] + Math.cos(dir+Math.PI/2)*20,
+				this.course_points[p][1] - Math.sin(dir+Math.PI/2)*20);
 		}
-		ctx.stroke();
+		ctx.fill();
 		
 		//draw the distance markers
+		ctx.fillStyle = this.colors.tall_grass;
+		ctx.beginPath();
 		for (let i = 0; i < this.distance_markers.length; i += 1)
 		{
-			ctx.beginPath();
+			ctx.moveTo(this.distance_markers[i].x, this.distance_markers[i].y);
 			ctx.arc(this.distance_markers[i].x, this.distance_markers[i].y, 15, 0, Math.PI*2);
-			ctx.stroke();
 		}
+		ctx.fill();
 	},
 	
 	setup: function()
