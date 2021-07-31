@@ -12,6 +12,12 @@ var game =
 		coach.setup();
 		this.draw();
 		this.game_state = "paused";
+		
+		document.body.onkeyup = function(e){
+			if(e.keyCode == 32){
+				game.start_stop();
+			}
+		};
 	},
 	draw: function()
 	{
@@ -23,6 +29,19 @@ var game =
 		clearInterval(this.loop_var);
 		this.loop_var = setInterval(function() {game.loop();}, 1000/60);  //60 fps
 		this.game_state = "play";
+	},
+	start_stop: function()
+	{
+		if (this.loop_var == null)
+		{
+			this.start();
+		}
+		else
+		{
+			clearInterval(this.loop_var);
+			this.loop_var = null;
+			this.game_state = "paused";
+		}
 	},
 	loop: function()
 	{
@@ -61,12 +80,12 @@ var game =
 					{
 						coach.target_marker = map.distance_markers[i];
 						i = map.distance_markers.length; //break out of the loop
-						this.start();
 					}
 				}
 				break;
 			default:
 				break;
 		}
+		this.draw();
 	},
 }

@@ -23,6 +23,12 @@ var coach =
 		}
 	},
 	draw: function() {
+		//target marker
+		map.ctx.fillStyle = map.colors.team_white;
+		map.ctx.beginPath();
+		map.ctx.arc(this.target_marker.x, this.target_marker.y, 10, 0, Math.PI*2);
+		map.ctx.fill();
+		
 		draw_dude(this.x, this.y, map.colors.team_white, 10);
 	}
 };

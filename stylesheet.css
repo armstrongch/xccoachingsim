@@ -2,6 +2,6 @@
 	border-style: solid;
 }
 
-body {
+body, button {
 	font-size: large;
 }
