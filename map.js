@@ -4,24 +4,7 @@ var map =
 	canvas: null,
 	hills: [],
 	terrain: [],
-	course_points: [
-		[50, 50],
-		[50, 50],
-		[600, 60],
-		[750, 325],
-		[825, 90],
-		[975, 40],
-		[900, 550],
-		[950, 720],
-		[700, 690],
-		[730, 370],
-		[530, 170],
-		[130, 250],
-		[60, 700],
-		[250, 650],
-		[520, 630],
-		[400, 320]
-	],
+	course_points: [],
 	course_segment_lengths: [],
 	pixels_per_meter: -1,
 	distance_markers: [],
@@ -61,6 +44,8 @@ var map =
 	{
 		this.canvas = $("#gameCanvas")[0];
 		this.ctx = this.canvas.getContext('2d');
+		
+		this.course_points = this.get_course_points();
 		
 		this.pixels_per_meter = 0;
 		for (let i = 1; i < this.course_points.length; i += 1)
@@ -204,5 +189,25 @@ var map =
 				last_terrain_index -= 2;
 			}
 		}
+	},
+	get_course_points: function() {
+		var canvas = this.canvas;
+		var generated_points = [];
+		
+		for (let j = 0; j < 4; j += 1)
+		{
+			for (let i = 0; i < 10; i += 1)
+			{
+				var width = 30 + (i + Math.random())*(canvas.width-60)/10;
+				if (j % 2 == 1)
+				{
+					width = canvas.width - width;
+				}
+				var height = 30 + (j + Math.random())*(canvas.height-60)/4;
+				generated_points.push([width, height]);
+			}
+		}
+		
+		return generated_points;
 	}
 };
